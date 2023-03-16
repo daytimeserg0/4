@@ -118,8 +118,7 @@ class Calculator(QWidget):
         self.input.setText(str(self.input.text()[:-1]))
 
     def _result(self):
-        #print((self.num_1))
-        if (self.input.text().count('.') > 1) or (self.num_1.count('.') > 1) or (self.input.text().count('н') > 0):
+        if (self.input.text().count('.') > 1) or (self.num_1.count('.') > 1) or (any (c.isalpha() for c in self.input.text())) or (any (c.isalpha() for c in self.num_1)):
             self.input.setText('Невозможное значение! Нажмите (С) чтобы продолжить.')
         else:
             self.num_2 = ''
