@@ -242,9 +242,6 @@ def answer(message):
 
 @bot.message_handler(content_types = ['text'])
 def send_message(message):
-    if message.text.lower() == 'Привет':
-        bot.send_message(message.chat.id, 'Здравсвтуй, я бот с расписанием группы БВТ2203! Нажмите /help чтобы узнать мои возможности.')
-    else:
-        bot.send_message(message.chat.id, 'Извините, я вас не понял. Нажмите /help чтобы узнать мои возможности.')
+    bot.send_message(message.chat.id, 'Извините, я вас не понял. Нажмите /help чтобы узнать мои возможности.')
 
 bot.polling(non_stop = True)
