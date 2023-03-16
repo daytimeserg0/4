@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Registration</title>
+</head>
+<body>
+	{% if already %}
+	<p style="color:#ff0000">This login is alredy taken! </p>
+	{% elif gap %}
+	<p style="color:#ff0000">You didn't fill in all the fields! </p>
+	{% endif %}
+    <form action="" method="post">
+      <p>
+    <label for="name">Your name:</label>
+    <input type="text" name="name">
+     </p>
+        <p>
+	    <label for="login">Login:</label>
+	    <input type="text" name="login">
+	     </p>
+	<p>
+	    <label for="password">Password:</label>
+	    <input type="password" name="password">
+	</p>
+	<p>
+	    <input type="submit" value="Sign In">
+	</p>
+    </form>
+
+</body>
+</html>
