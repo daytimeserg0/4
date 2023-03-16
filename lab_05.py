@@ -9,7 +9,7 @@ conn = psycopg2.connect(database="service_db",
                         host="localhost",
                         port="5432")
 cursor = conn.cursor()
-cursor.execute("SELECT * FROM test;")
+cursor.execute("SELECT * FROM test;" )
 
 
 
