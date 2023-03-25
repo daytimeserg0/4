@@ -19,13 +19,14 @@ class MainWindow(QWidget):
         self.tabs = QTabWidget(self)
         self.vbox.addWidget(self.tabs)
 
-        self._create_monday_tab()
-        self._create_tuesday_tab()
-        self._create_wednesday_tab()
+        self._create_week_tab()
+        self._create_teacher_tab()
+        self._create_subject_tab()
+        self._create_schedule_tab()
 
 
     def _connect_to_db(self):
-        self.conn = psycopg2.connect(database="lab_8",
+        self.conn = psycopg2.connect(database="schedule_for_lab_8",
                                          user="postgres",
                                          password="A123a123s",
                                          host="localhost",
@@ -33,11 +34,11 @@ class MainWindow(QWidget):
         self.cursor = self.conn.cursor()
 
 
-    def _create_monday_tab(self):
-        self.monday_tab = QWidget()
-        self.tabs.addTab(self.monday_tab, "Monday")
+    def _create_week_tab(self):
+        self.week_tab = QWidget()
+        self.tabs.addTab(self.week_tab, "Week")
 
-        self.monday_gbox = QGroupBox("Monday")
+        self.week_gbox = QGroupBox("Week")
 
         self.svbox = QVBoxLayout()
         self.shbox1 = QHBoxLayout()
@@ -46,22 +47,22 @@ class MainWindow(QWidget):
         self.svbox.addLayout(self.shbox1)
         self.svbox.addLayout(self.shbox2)
 
-        self.shbox1.addWidget(self.monday_gbox)
+        self.shbox1.addWidget(self.week_gbox)
 
-        self._create_monday_table()
+        self._create_week_table()
 
         self.update_shedule_button = QPushButton("Update")
         self.shbox2.addWidget(self.update_shedule_button)
         self.update_shedule_button.clicked.connect(self._update_shedule)
 
-        self.monday_tab.setLayout(self.svbox)
+        self.week_tab.setLayout(self.svbox)
 
 
-    def _create_tuesday_tab(self):
-        self.tuesday_tab = QWidget()
-        self.tabs.addTab(self.tuesday_tab, "Tuesady")
+    def _create_teacher_tab(self):
+        self.teacher_tab = QWidget()
+        self.tabs.addTab(self.teacher_tab, "Teachers")
 
-        self.tuesday_gbox = QGroupBox("Tuesday")
+        self.teacher_gbox = QGroupBox("Teachers")
 
         self.tvbox = QVBoxLayout()
         self.thbox1 = QHBoxLayout()
@@ -70,22 +71,25 @@ class MainWindow(QWidget):
         self.tvbox.addLayout(self.thbox1)
         self.tvbox.addLayout(self.thbox2)
 
-        self.thbox1.addWidget(self.tuesday_gbox)
+        self.thbox1.addWidget(self.teacher_gbox)
 
-        self._create_tuesday_table()
+        self._create_teacher_table()
 
+        self.add_shedule_button = QPushButton('Add')
         self.update_shedule_button2 = QPushButton("Update")
         self.thbox2.addWidget(self.update_shedule_button2)
+        self.thbox2.addWidget(self.add_shedule_button)
+        self.add_shedule_button.clicked.connect(self._add_shedule)
         self.update_shedule_button2.clicked.connect(self._update_shedule2)
 
-        self.tuesday_tab.setLayout(self.tvbox)
+        self.teacher_tab.setLayout(self.tvbox)
 
 
-    def _create_wednesday_tab(self):
-        self.wednesday_tab = QWidget()
-        self.tabs.addTab(self.wednesday_tab, "Wednesday")
+    def _create_subject_tab(self):
+        self.subject_tab = QWidget()
+        self.tabs.addTab(self.subject_tab, "Subjects")
 
-        self.wednesday_gbox = QGroupBox("Wednesday")
+        self.subject_gbox = QGroupBox("Subjects")
 
         self.wvbox = QVBoxLayout()
         self.whbox1 = QHBoxLayout()
@@ -94,227 +98,297 @@ class MainWindow(QWidget):
         self.wvbox.addLayout(self.whbox1)
         self.wvbox.addLayout(self.whbox2)
 
-        self.whbox1.addWidget(self.wednesday_gbox)
+        self.whbox1.addWidget(self.subject_gbox)
 
-        self._create_wednesday_table()
+        self._create_subject_table()
 
+        self.add_shedule_button2 = QPushButton("Add")
         self.update_shedule_button3 = QPushButton("Update")
         self.whbox2.addWidget(self.update_shedule_button3)
+        self.whbox2.addWidget(self.add_shedule_button2)
         self.update_shedule_button3.clicked.connect(self._update_shedule3)
+        self.add_shedule_button2.clicked.connect(self._add_shedule2)
 
-        self.wednesday_tab.setLayout(self.wvbox)
+        self.subject_tab.setLayout(self.wvbox)
 
-    def _create_monday_table(self):
-        self.monday_table = QTableWidget()
-        self.monday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        self.monday_table.setColumnCount(5)
-        self.monday_table.setHorizontalHeaderLabels(["Time", "Subject", "Auditorium", "", ""])
+    def _create_schedule_tab(self):
+        self.schedule_tab = QWidget()
+        self.tabs.addTab(self.schedule_tab, "Full schedule")
 
-        self._update_monday_table()
+        self.schedule_gbox = QGroupBox("Full schedule")
+
+        self.fvbox = QVBoxLayout()
+        self.fhbox1 = QHBoxLayout()
+        self.fhbox2 = QHBoxLayout()
+
+        self.fvbox.addLayout(self.fhbox1)
+        self.fvbox.addLayout(self.fhbox2)
+
+        self.fhbox1.addWidget(self.schedule_gbox)
+
+        self._create_schedule_table()
+        self.schedule_tab.setLayout(self.fvbox)
+
+    def _create_week_table(self):
+        self.week_table = QTableWidget()
+        self.week_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.week_table.setColumnCount(6)
+        self.week_table.setHorizontalHeaderLabels(["Day", "Time", "Subject", "Auditorium", "", ""])
+
+        self._update_week_table()
 
         self.mvbox = QVBoxLayout()
-        self.mvbox.addWidget(self.monday_table)
-        self.monday_gbox.setLayout(self.mvbox)
+        self.mvbox.addWidget(self.week_table)
+        self.week_gbox.setLayout(self.mvbox)
 
 
-    def _create_tuesday_table(self):
-        self.tuesday_table = QTableWidget()
-        self.tuesday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+    def _create_teacher_table(self):
+        self.teacher_table = QTableWidget()
+        self.teacher_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        self.tuesday_table.setColumnCount(5)
-        self.tuesday_table.setHorizontalHeaderLabels(["Time", "Subject", "Auditorium", "", ""])
+        self.teacher_table.setColumnCount(5)
+        self.teacher_table.setHorizontalHeaderLabels(["Id", "Teacher", "Subject", "", ""])
 
-        self._update_tuesday_table()
+        self._update_teacher_table()
 
         self.mvbox1 = QVBoxLayout()
-        self.mvbox1.addWidget(self.tuesday_table)
-        self.tuesday_gbox.setLayout(self.mvbox1)
+        self.mvbox1.addWidget(self.teacher_table)
+        self.teacher_gbox.setLayout(self.mvbox1)
 
 
-    def _create_wednesday_table(self):
-        self.wednesday_table = QTableWidget()
-        self.wednesday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+    def _create_subject_table(self):
+        self.subject_table = QTableWidget()
+        self.subject_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
 
-        self.wednesday_table.setColumnCount(5)
-        self.wednesday_table.setHorizontalHeaderLabels(["Time", "Subject", "Auditorium", "", ""])
+        self.subject_table.setColumnCount(4)
+        self.subject_table.setHorizontalHeaderLabels(["Id", "Subject", "", ""])
 
-        self._update_wednesday_table()
+        self._update_subject_table()
 
         self.mvbox2 = QVBoxLayout()
-        self.mvbox2.addWidget(self.wednesday_table)
-        self.wednesday_gbox.setLayout(self.mvbox2)
+        self.mvbox2.addWidget(self.subject_table)
+        self.subject_gbox.setLayout(self.mvbox2)
 
-    def _update_monday_table(self):
-        self.cursor.execute("SELECT * FROM timetable ORDER BY id")
+    def _create_schedule_table(self):
+        self.schedule_table = QTableWidget()
+        self.schedule_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.schedule_table.setColumnCount(5)
+        self.schedule_table.setHorizontalHeaderLabels(["Day", "Time", "Subject","Teacher", "Auditorium"])
+
+        self._update_schedule_table()
+
+        self.fvbox = QVBoxLayout()
+        self.fvbox.addWidget(self.schedule_table)
+        self.schedule_gbox.setLayout(self.fvbox)
+
+    def _update_week_table(self):
+        self.cursor.execute("SELECT * FROM firs_week ORDER BY id")
         records = list(self.cursor.fetchall())
 
-        self.monday_table.setRowCount(len(records))
+        self.week_table.setRowCount(len(records))
         for i, r in enumerate(records):
             r = list(r)
             stroke_updateButton = QPushButton("change")
             stroke_deleteButton = QPushButton("delete")
 
-            self.monday_table.setItem(i, 0, QTableWidgetItem(str(r[2])))
-            self.monday_table.setItem(i, 1, QTableWidgetItem(str(r[1])))
-            self.monday_table.setItem(i, 2, QTableWidgetItem(str(r[4])))
-            self.monday_table.setCellWidget(i, 3, stroke_updateButton)
-            self.monday_table.setCellWidget(i, 4, stroke_deleteButton)
+            self.week_table.setItem(i, 0, QTableWidgetItem(str(r[1])))
+            self.week_table.setItem(i, 1, QTableWidgetItem(str(r[2])))
+            self.week_table.setItem(i, 2, QTableWidgetItem(str(r[3])))
+            self.week_table.setItem(i, 3, QTableWidgetItem(str(r[4])))
+            self.week_table.setCellWidget(i, 4, stroke_updateButton)
+            self.week_table.setCellWidget(i, 5, stroke_deleteButton)
 
             d='Monday'
-            stroke_updateButton.clicked.connect(lambda ch, num=i: self._change_day_from_monday(num, d))
-            stroke_deleteButton.clicked.connect(lambda ch, num=i: self._delete_day_from_monday(num, d))
+            stroke_updateButton.clicked.connect(lambda ch, num=i: self._change_day_from_week(num, d))
+            stroke_deleteButton.clicked.connect(lambda ch, num=i: self._delete_day_from_week(num, d))
             stroke_deleteButton.clicked.connect(self._update_shedule)
 
-        self.monday_table.resizeRowsToContents()
+        self.week_table.resizeRowsToContents()
 
 
-    def _update_tuesday_table(self):
-        self.cursor.execute("SELECT * FROM timetable_2 ORDER BY id")
+    def _update_teacher_table(self):
+        self.cursor.execute("SELECT * FROM teacher ORDER BY id")
         records = list(self.cursor.fetchall())
 
-        self.tuesday_table.setRowCount(len(records))
+        self.teacher_table.setRowCount(len(records))
 
         for i, r in enumerate(records):
             r = list(r)
             stroke_updateButton2 = QPushButton("change")
             stroke_deleteButton2 = QPushButton("delete")
 
-            self.tuesday_table.setItem(i, 0, QTableWidgetItem(str(r[2])))
-            self.tuesday_table.setItem(i, 1, QTableWidgetItem(str(r[1])))
-            self.tuesday_table.setItem(i, 2, QTableWidgetItem(str(r[4])))
-            self.tuesday_table.setCellWidget(i, 3, stroke_updateButton2)
-            self.tuesday_table.setCellWidget(i, 4, stroke_deleteButton2)
+            self.teacher_table.setItem(i, 0, QTableWidgetItem(str(r[0])))
+            self.teacher_table.setItem(i, 1, QTableWidgetItem(str(r[1])))
+            self.teacher_table.setItem(i, 2, QTableWidgetItem(str(r[2])))
+            self.teacher_table.setCellWidget(i, 3, stroke_updateButton2)
+            self.teacher_table.setCellWidget(i, 4, stroke_deleteButton2)
 
-            d='Tuesday'
-            stroke_updateButton2.clicked.connect(lambda ch, num=i: self._change_day_from_tuesday(num, d))
-            stroke_deleteButton2.clicked.connect(lambda ch, num=i: self._delete_day_from_tuesday(num, d))
+            d='teacher'
+            stroke_updateButton2.clicked.connect(lambda ch, num=i: self._change_day_from_teacher(num, d))
+            stroke_deleteButton2.clicked.connect(lambda ch, num=i: self._delete_day_from_teacher(num, d))
             stroke_deleteButton2.clicked.connect(self._update_shedule2)
 
-        self.tuesday_table.resizeRowsToContents()
+        self.teacher_table.resizeRowsToContents()
 
 
-    def _update_wednesday_table(self):
-        self.cursor.execute("SELECT * FROM timetable_3 ORDER BY id")
+    def _update_subject_table(self):
+        self.cursor.execute("SELECT * FROM subject ORDER BY id")
         records = list(self.cursor.fetchall())
 
-        self.wednesday_table.setRowCount(len(records))
+        self.subject_table.setRowCount(len(records))
 
         for i, r in enumerate(records):
             r = list(r)
-            stroke_updateButton3 = QPushButton("change")
             stroke_deleteButton3 = QPushButton("delete")
+            stroke_changeButton3 = QPushButton("change")
 
-            self.wednesday_table.setItem(i, 0, QTableWidgetItem(str(r[2])))
-            self.wednesday_table.setItem(i, 1, QTableWidgetItem(str(r[1])))
-            self.wednesday_table.setItem(i, 2, QTableWidgetItem(str(r[4])))
-            self.wednesday_table.setCellWidget(i, 3, stroke_updateButton3)
-            self.wednesday_table.setCellWidget(i, 4, stroke_deleteButton3)
+            self.subject_table.setItem(i, 0, QTableWidgetItem(str(r[0])))
+            self.subject_table.setItem(i, 1, QTableWidgetItem(str(r[1])))
+            self.subject_table.setCellWidget(i, 2, stroke_changeButton3)
+            self.subject_table.setCellWidget(i, 3, stroke_deleteButton3)
 
-            d='Wednesday'
-            stroke_updateButton3.clicked.connect(lambda ch, num=i: self._change_day_from_wednesday(num, d))
-            stroke_deleteButton3.clicked.connect(lambda ch, num=i: self._delete_day_from_wednesday(num, d))
+            d='subject'
+            stroke_deleteButton3.clicked.connect(lambda ch, num=i: self._delete_day_from_subject(num, d))
+            stroke_changeButton3.clicked.connect(lambda ch, num=i: self._change_day_from_subject(num, d))
             stroke_deleteButton3.clicked.connect(self._update_shedule3)
 
-        self.wednesday_table.resizeRowsToContents()
+        self.subject_table.resizeRowsToContents()
+
+    def _update_schedule_table(self):
+        self.cursor.execute('SELECT firs_week.day, firs_week.time, firs_week.subject, '
+                            'teacher.name, firs_week.room FROM firs_week JOIN teacher ON firs_week.subject = teacher.subject ORDER BY firs_week.id;')
+        records = list(self.cursor.fetchall())
+
+        self.schedule_table.setRowCount(len(records))
+        for i, r in enumerate(records):
+            r = list(r)
+
+            self.schedule_table.setItem(i, 0, QTableWidgetItem(str(r[0])))
+            self.schedule_table.setItem(i, 1, QTableWidgetItem(str(r[1])))
+            self.schedule_table.setItem(i, 2, QTableWidgetItem(str(r[2])))
+            self.schedule_table.setItem(i, 3, QTableWidgetItem(str(r[3])))
+            self.schedule_table.setItem(i, 4, QTableWidgetItem(str(r[4])))
+
+        self.schedule_table.resizeRowsToContents()
 
 
-    def _delete_day_from_monday(self, rowNum, day):
+    def _delete_day_from_week(self, rowNum, day):
         row = list()
-        for i in range(self.monday_table.columnCount()):
+        for i in range(self.week_table.columnCount()):
             try:
-                row.append(self.monday_table.item(rowNum, i).text())
+                row.append(self.week_table.item(rowNum, i).text())
             except:
                 row.append(None)
         try:
-            self.cursor.execute(f'UPDATE timetable SET location = \'\', subject = \'\' WHERE start_time = \'{row[0]}\'')
+            self.cursor.execute(f'UPDATE firs_week SET room = \'\', subject = \'\' WHERE day = \'{row[0]}\' AND time = \'{row[1]}\'')
             self.conn.commit()
         except:
             QMessageBox.about(self, "Error", "Нельзя изменить время")
             self._update_shedule()
 
 
-    def _delete_day_from_tuesday(self, rowNum, day):
+    def _delete_day_from_teacher(self, rowNum, day):
         row = list()
-        for i in range(self.tuesday_table.columnCount()):
+        for i in range(self.teacher_table.columnCount()):
             try:
-                row.append(self.tuesday_table.item(rowNum, i).text())
+                row.append(self.teacher_table.item(rowNum, i).text())
             except:
                 row.append(None)
         try:
-            self.cursor.execute(f'UPDATE timetable_2 SET location = \'\', subject = \'\' WHERE start_time = \'{row[0]}\'')
+            self.cursor.execute(f'DELETE FROM teacher WHERE id = \'{row[0]}\'')
             self.conn.commit()
         except:
-            QMessageBox.about(self, "Error", "Нельзя изменить время")
+            QMessageBox.about(self, "Error", "Нельзя изменить id")
             self._update_shedule2()
 
 
-    def _delete_day_from_wednesday(self, rowNum, day):
+    def _delete_day_from_subject(self, rowNum, day):
         row = list()
-        for i in range(self.wednesday_table.columnCount()):
+        for i in range(self.subject_table.columnCount()):
             try:
-                row.append(self.wednesday_table.item(rowNum, i).text())
+                row.append(self.subject_table.item(rowNum, i).text())
             except:
                 row.append(None)
         try:
-            self.cursor.execute(f'UPDATE timetable SET location = \'\', subject = \'\' WHERE start_time = \'{row[0]}\'')
+            self.cursor.execute(f'DELETE FROM subject WHERE id = \'{row[0]}\'')
             self.conn.commit()
         except:
             QMessageBox.about(self, "Error", "Нельзя изменить время")
             self._update_shedule3()
 
 
-    def _change_day_from_monday(self, rowNum, day):
+    def _change_day_from_week(self, rowNum, day):
         row = list()
-        for i in range(self.monday_table.columnCount()):
+        for i in range(self.week_table.columnCount()):
             try:
-                row.append(self.monday_table.item(rowNum, i).text())
+                row.append(self.week_table.item(rowNum, i).text())
             except:
                 row.append(None)
         try:
-            self.cursor.execute(f'UPDATE timetable SET location = \'{row[2]}\', subject = \'{row[1]}\' WHERE start_time = \'{row[0]}\'')
+            self.cursor.execute(f'UPDATE firs_week SET room = \'{row[3]}\', subject = \'{row[2]}\' WHERE day = \'{row[0]}\' AND time = \'{row[1]}\'')
             self.conn.commit()
         except:
-            QMessageBox.about(self, "Error", "Нельзя изменить время")
-            self._update_shedule()
+            QMessageBox.about(self, "Error", "Проверьте не меняли ли вы время или день/, или же вы ввели предмет, которого нет в списке")
+        self._update_shedule()
 
 
-    def _change_day_from_tuesday(self, rowNum, day):
+    def _change_day_from_teacher(self, rowNum, day):
         row = list()
-        for i in range(self.tuesday_table.columnCount()):
+        for i in range(self.teacher_table.columnCount()):
             try:
-                row.append(self.tuesday_table.item(rowNum, i).text())
+                row.append(self.teacher_table.item(rowNum, i).text())
             except:
                 row.append(None)
         try:
-            self.cursor.execute(f'UPDATE timetable_2 SET location = \'{row[2]}\', subject = \'{row[1]}\' WHERE start_time = \'{row[0]}\'')
+            self.cursor.execute(f'UPDATE teacher SET name = \'{row[1]}\', subject = \'{row[2]}\' WHERE id = \'{row[0]}\'')
             self.conn.commit()
         except:
-            QMessageBox.about(self, "Error", "Нельзя изменить время")
-            self._update_shedule2()
+            QMessageBox.about(self, "Error", "Проверьте не изменили ли вы id ,и есть ли ваш предмет в списке")
+        self._update_shedule2()
 
-    def _change_day_from_wednesday(self, rowNum, day):
+    def _change_day_from_subject(self, rowNum, day):
         row = list()
-        for i in range(self.wednesday_table.columnCount()):
+        for i in range(self.subject_table.columnCount()):
             try:
-                row.append(self.wednesday_table.item(rowNum, i).text())
+                row.append(self.subject_table.item(rowNum, i).text())
+                print(row)
             except:
                 row.append(None)
         try:
-            self.cursor.execute(f'UPDATE timetable_3 SET location = \'{row[2]}\', subject = \'{row[1]}\' WHERE start_time = \'{row[0]}\'')
+            self.cursor.execute(f'UPDATE subject SET name = \'{row[1]}\' WHERE id = {row[0]};')
             self.conn.commit()
+            print(1)
         except:
-            QMessageBox.about(self, "Error", "Нельзя изменить время")
-            self._update_shedule3()
+            QMessageBox.about(self, "Error", "Либо предмет с таким именем уже существует, либо этот предмет нельзя изменить т.к. другие таблицы опираются на него")
+        self._update_shedule3()
 
     def _update_shedule(self):
-        self._update_monday_table()
+        self._update_week_table()
+        self._update_schedule_table()
 
     def _update_shedule2(self):
-        self._update_tuesday_table()
+        self._update_teacher_table()
+        self._update_schedule_table()
 
     def _update_shedule3(self):
-        self._update_wednesday_table()
+        self._update_subject_table()
+        self._update_schedule_table()
+
+    def _add_shedule(self):
+        self.cursor.execute('INSERT INTO teacher (name, subject) VALUES (\'\', \'\');')
+        self.conn.commit()
+        self._update_shedule2()
+
+    def _add_shedule2(self):
+        try:
+            self.cursor.execute('INSERT INTO subject (name) VALUES (\'New subject\');')
+            self.conn.commit()
+        except:
+            QMessageBox.about(self, "Error", "Сначала измените новый предмет")
+        self._update_shedule3()
 
 app = QApplication(sys.argv)
 win = MainWindow()
