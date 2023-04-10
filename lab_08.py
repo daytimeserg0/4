@@ -3,7 +3,7 @@ import psycopg2
 from PyQt5.QtWidgets import (QApplication, QWidget,
                              QTabWidget, QAbstractScrollArea,
                              QVBoxLayout, QHBoxLayout,
-                             QTableWidget, QGroupBox, QTableWidgetItem, QPushButton, QMessageBox )
+                             QTableWidget, QGroupBox, QTableWidgetItem, QPushButton, QMessageBox, QInputDialog, QAbstractItemView )
 
 
 class MainWindow(QWidget):
@@ -116,16 +116,28 @@ class MainWindow(QWidget):
         self.schedule_tab = QWidget()
         self.tabs.addTab(self.schedule_tab, "Full schedule")
 
-        self.schedule_gbox = QGroupBox("Full schedule")
+        self.monday_gbox = QGroupBox("Monday")
+        self.tuesday_gbox = QGroupBox("Tuesday")
+        self.wednesday_gbox = QGroupBox("Wednesday")
+        self.thursday_gbox = QGroupBox("Thursday")
+        self.friday_gbox = QGroupBox("Friday")
+        self.saturday_gbox = QGroupBox("Saturday")
 
         self.fvbox = QVBoxLayout()
         self.fhbox1 = QHBoxLayout()
         self.fhbox2 = QHBoxLayout()
+        self.fhbox3 = QHBoxLayout()
 
         self.fvbox.addLayout(self.fhbox1)
         self.fvbox.addLayout(self.fhbox2)
+        self.fvbox.addLayout(self.fhbox3)
 
-        self.fhbox1.addWidget(self.schedule_gbox)
+        self.fhbox1.addWidget(self.monday_gbox)
+        self.fhbox2.addWidget(self.tuesday_gbox)
+        self.fhbox3.addWidget(self.wednesday_gbox)
+        self.fhbox1.addWidget(self.thursday_gbox)
+        self.fhbox2.addWidget(self.friday_gbox)
+        self.fhbox3.addWidget(self.saturday_gbox)
 
         self._create_schedule_table()
         self.schedule_tab.setLayout(self.fvbox)
@@ -143,6 +155,8 @@ class MainWindow(QWidget):
         self.mvbox.addWidget(self.week_table)
         self.week_gbox.setLayout(self.mvbox)
 
+        self.week_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+
 
     def _create_teacher_table(self):
         self.teacher_table = QTableWidget()
@@ -156,6 +170,8 @@ class MainWindow(QWidget):
         self.mvbox1 = QVBoxLayout()
         self.mvbox1.addWidget(self.teacher_table)
         self.teacher_gbox.setLayout(self.mvbox1)
+
+        self.teacher_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
 
     def _create_subject_table(self):
@@ -171,18 +187,93 @@ class MainWindow(QWidget):
         self.mvbox2.addWidget(self.subject_table)
         self.subject_gbox.setLayout(self.mvbox2)
 
-    def _create_schedule_table(self):
-        self.schedule_table = QTableWidget()
-        self.schedule_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+        self.subject_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        self.schedule_table.setColumnCount(5)
-        self.schedule_table.setHorizontalHeaderLabels(["Day", "Time", "Subject","Teacher", "Auditorium"])
+    def _create_schedule_table(self):
+        #Понедельник
+        self.monday_table = QTableWidget()
+        self.monday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.monday_table.setColumnCount(4)
+        self.monday_table.setHorizontalHeaderLabels(["Time", "Subject","Teacher", "Auditorium"])
 
         self._update_schedule_table()
 
-        self.fvbox = QVBoxLayout()
-        self.fvbox.addWidget(self.schedule_table)
-        self.schedule_gbox.setLayout(self.fvbox)
+        self.mvbox3 = QVBoxLayout()
+        self.mvbox3.addWidget(self.monday_table)
+        self.monday_gbox.setLayout(self.mvbox3)
+
+        #Вторник
+        self.tuesday_table = QTableWidget()
+        self.tuesday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.tuesday_table.setColumnCount(4)
+        self.tuesday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium"])
+
+        self._update_schedule_table2()
+
+        self.mvbox4 = QVBoxLayout()
+        self.mvbox4.addWidget(self.tuesday_table)
+        self.tuesday_gbox.setLayout(self.mvbox4)
+
+        #Среда
+        self.wednesday_table = QTableWidget()
+        self.wednesday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.wednesday_table.setColumnCount(4)
+        self.wednesday_table.setHorizontalHeaderLabels(["Time", "Subject","Teacher", "Auditorium"])
+
+        self._update_schedule_table3()
+
+        self.mvbox5 = QVBoxLayout()
+        self.mvbox5.addWidget(self.wednesday_table)
+        self.wednesday_gbox.setLayout(self.mvbox5)
+
+        # Четверг
+        self.thursday_table = QTableWidget()
+        self.thursday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.thursday_table.setColumnCount(4)
+        self.thursday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium"])
+
+        self._update_schedule_table4()
+
+        self.mvbox6 = QVBoxLayout()
+        self.mvbox6.addWidget(self.thursday_table)
+        self.thursday_gbox.setLayout(self.mvbox6)
+
+        # Пятница
+        self.friday_table = QTableWidget()
+        self.friday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.friday_table.setColumnCount(4)
+        self.friday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium"])
+
+        self._update_schedule_table5()
+
+        self.mvbox8 = QVBoxLayout()
+        self.mvbox8.addWidget(self.friday_table)
+        self.friday_gbox.setLayout(self.mvbox8)
+
+        # Суббота
+        self.saturday_table = QTableWidget()
+        self.saturday_table.setSizeAdjustPolicy(QAbstractScrollArea.AdjustToContents)
+
+        self.saturday_table.setColumnCount(4)
+        self.saturday_table.setHorizontalHeaderLabels(["Time", "Subject", "Teacher", "Auditorium"])
+
+        self._update_schedule_table6()
+
+        self.mvbox9 = QVBoxLayout()
+        self.mvbox9.addWidget(self.saturday_table)
+        self.saturday_gbox.setLayout(self.mvbox9)
+
+        self.monday_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tuesday_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.wednesday_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.thursday_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.friday_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.saturday_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
     def _update_week_table(self):
         self.cursor.execute("SELECT * FROM firs_week ORDER BY id")
@@ -214,7 +305,7 @@ class MainWindow(QWidget):
         records = list(self.cursor.fetchall())
 
         self.teacher_table.setRowCount(len(records))
-
+        print(enumerate(records))
         for i, r in enumerate(records):
             r = list(r)
             stroke_updateButton2 = QPushButton("change")
@@ -259,20 +350,99 @@ class MainWindow(QWidget):
 
     def _update_schedule_table(self):
         self.cursor.execute('SELECT firs_week.day, firs_week.time, firs_week.subject, '
-                            'teacher.name, firs_week.room FROM firs_week JOIN teacher ON firs_week.subject = teacher.subject ORDER BY firs_week.id;')
+                            'teacher.name, firs_week.room FROM firs_week JOIN teacher ON firs_week.subject = teacher.subject WHERE firs_week.day = \'Понедельник\' ORDER BY firs_week.id;')
         records = list(self.cursor.fetchall())
 
-        self.schedule_table.setRowCount(len(records))
+        self.monday_table.setRowCount(len(records))
         for i, r in enumerate(records):
             r = list(r)
 
-            self.schedule_table.setItem(i, 0, QTableWidgetItem(str(r[0])))
-            self.schedule_table.setItem(i, 1, QTableWidgetItem(str(r[1])))
-            self.schedule_table.setItem(i, 2, QTableWidgetItem(str(r[2])))
-            self.schedule_table.setItem(i, 3, QTableWidgetItem(str(r[3])))
-            self.schedule_table.setItem(i, 4, QTableWidgetItem(str(r[4])))
+            self.monday_table.setItem(i, 0, QTableWidgetItem(str(r[1])))
+            self.monday_table.setItem(i, 1, QTableWidgetItem(str(r[2])))
+            self.monday_table.setItem(i, 2, QTableWidgetItem(str(r[3])))
+            self.monday_table.setItem(i, 3, QTableWidgetItem(str(r[4])))
 
-        self.schedule_table.resizeRowsToContents()
+        self.monday_table.resizeRowsToContents()
+
+    def _update_schedule_table2(self):
+        self.cursor.execute('SELECT firs_week.day, firs_week.time, firs_week.subject, '
+                            'teacher.name, firs_week.room FROM firs_week JOIN teacher ON firs_week.subject = teacher.subject WHERE firs_week.day = \'Вторник\' ORDER BY firs_week.id;')
+        records = list(self.cursor.fetchall())
+
+        self.tuesday_table.setRowCount(len(records))
+        for i, r in enumerate(records):
+            r = list(r)
+
+            self.tuesday_table.setItem(i, 0, QTableWidgetItem(str(r[1])))
+            self.tuesday_table.setItem(i, 1, QTableWidgetItem(str(r[2])))
+            self.tuesday_table.setItem(i, 2, QTableWidgetItem(str(r[3])))
+            self.tuesday_table.setItem(i, 3, QTableWidgetItem(str(r[4])))
+
+        self.tuesday_table.resizeRowsToContents()
+
+    def _update_schedule_table3(self):
+        self.cursor.execute('SELECT firs_week.day, firs_week.time, firs_week.subject, '
+                            'teacher.name, firs_week.room FROM firs_week JOIN teacher ON firs_week.subject = teacher.subject WHERE firs_week.day = \'Среда\' ORDER BY firs_week.id;')
+        records = list(self.cursor.fetchall())
+
+        self.wednesday_table.setRowCount(len(records))
+        for i, r in enumerate(records):
+            r = list(r)
+
+            self.wednesday_table.setItem(i, 0, QTableWidgetItem(str(r[1])))
+            self.wednesday_table.setItem(i, 1, QTableWidgetItem(str(r[2])))
+            self.wednesday_table.setItem(i, 2, QTableWidgetItem(str(r[3])))
+            self.wednesday_table.setItem(i, 3, QTableWidgetItem(str(r[4])))
+
+        self.wednesday_table.resizeRowsToContents()
+
+    def _update_schedule_table4(self):
+        self.cursor.execute('SELECT firs_week.day, firs_week.time, firs_week.subject, '
+                            'teacher.name, firs_week.room FROM firs_week JOIN teacher ON firs_week.subject = teacher.subject WHERE firs_week.day = \'Четверг\' ORDER BY firs_week.id;')
+        records = list(self.cursor.fetchall())
+
+        self.thursday_table.setRowCount(len(records))
+        for i, r in enumerate(records):
+            r = list(r)
+
+            self.thursday_table.setItem(i, 0, QTableWidgetItem(str(r[1])))
+            self.thursday_table.setItem(i, 1, QTableWidgetItem(str(r[2])))
+            self.thursday_table.setItem(i, 2, QTableWidgetItem(str(r[3])))
+            self.thursday_table.setItem(i, 3, QTableWidgetItem(str(r[4])))
+
+        self.thursday_table.resizeRowsToContents()
+
+    def _update_schedule_table5(self):
+        self.cursor.execute('SELECT firs_week.day, firs_week.time, firs_week.subject, '
+                            'teacher.name, firs_week.room FROM firs_week JOIN teacher ON firs_week.subject = teacher.subject WHERE firs_week.day = \'Пятница\' ORDER BY firs_week.id;')
+        records = list(self.cursor.fetchall())
+
+        self.friday_table.setRowCount(len(records))
+        for i, r in enumerate(records):
+            r = list(r)
+
+            self.friday_table.setItem(i, 0, QTableWidgetItem(str(r[1])))
+            self.friday_table.setItem(i, 1, QTableWidgetItem(str(r[2])))
+            self.friday_table.setItem(i, 2, QTableWidgetItem(str(r[3])))
+            self.friday_table.setItem(i, 3, QTableWidgetItem(str(r[4])))
+
+        self.friday_table.resizeRowsToContents()
+
+    def _update_schedule_table6(self):
+        self.cursor.execute('SELECT firs_week.day, firs_week.time, firs_week.subject, '
+                            'teacher.name, firs_week.room FROM firs_week JOIN teacher ON firs_week.subject = teacher.subject WHERE firs_week.day = \'Суббота\' ORDER BY firs_week.id;')
+        records = list(self.cursor.fetchall())
+
+        self.saturday_table.setRowCount(len(records))
+        for i, r in enumerate(records):
+            r = list(r)
+
+            self.saturday_table.setItem(i, 0, QTableWidgetItem(str(r[1])))
+            self.saturday_table.setItem(i, 1, QTableWidgetItem(str(r[2])))
+            self.saturday_table.setItem(i, 2, QTableWidgetItem(str(r[3])))
+            self.saturday_table.setItem(i, 3, QTableWidgetItem(str(r[4])))
+
+        self.saturday_table.resizeRowsToContents()
 
 
     def _delete_day_from_week(self, rowNum, day):
@@ -280,115 +450,258 @@ class MainWindow(QWidget):
         for i in range(self.week_table.columnCount()):
             try:
                 row.append(self.week_table.item(rowNum, i).text())
+                print(row)
             except:
                 row.append(None)
         try:
             self.cursor.execute(f'UPDATE firs_week SET room = \'\', subject = \'\' WHERE day = \'{row[0]}\' AND time = \'{row[1]}\'')
             self.conn.commit()
+            self._update_shedule()
         except:
             QMessageBox.about(self, "Error", "Нельзя изменить время")
-            self._update_shedule()
+        #self._update_shedule()
 
 
     def _delete_day_from_teacher(self, rowNum, day):
         row = list()
+        row2 = list()
+        for i in range(30):
+            try:
+                row2.append(self.week_table.item(i, 2).text())
+            except:
+                row2.append(None)
         for i in range(self.teacher_table.columnCount()):
             try:
                 row.append(self.teacher_table.item(rowNum, i).text())
             except:
                 row.append(None)
-        try:
+        if row[2] in row2:
+            QMessageBox.about(self, "!", "Нельзя удалить этого учителя")
+            self._update_shedule2()
+        else:
             self.cursor.execute(f'DELETE FROM teacher WHERE id = \'{row[0]}\'')
             self.conn.commit()
-        except:
-            QMessageBox.about(self, "Error", "Нельзя изменить id")
             self._update_shedule2()
 
 
     def _delete_day_from_subject(self, rowNum, day):
         row = list()
+        row3 = list()
+        for i in range(self.teacher_table.columnCount()):
+            try:
+                row3.append(self.teacher_table.item(i, 2).text())
+            except:
+                row3.append(None)
         for i in range(self.subject_table.columnCount()):
             try:
                 row.append(self.subject_table.item(rowNum, i).text())
             except:
                 row.append(None)
-        try:
+        if row[1] in row3:
+            QMessageBox.about(self, "!", "Данный предмет нельзя удалить")
+            self._update_shedule3()
+        else:
             self.cursor.execute(f'DELETE FROM subject WHERE id = \'{row[0]}\'')
             self.conn.commit()
-        except:
-            QMessageBox.about(self, "Error", "Нельзя изменить время")
             self._update_shedule3()
 
 
     def _change_day_from_week(self, rowNum, day):
         row = list()
+        row2 = list()
+        for i in range(40):
+            try:
+                row2.append(self.teacher_table.item(i, 2).text())
+            except:
+                row2.append(None)
         for i in range(self.week_table.columnCount()):
             try:
                 row.append(self.week_table.item(rowNum, i).text())
             except:
                 row.append(None)
-        try:
-            self.cursor.execute(f'UPDATE firs_week SET room = \'{row[3]}\', subject = \'{row[2]}\' WHERE day = \'{row[0]}\' AND time = \'{row[1]}\'')
+        new_name, ok_pressed = QInputDialog.getText(self, "!",
+                                                        "Введите новый предмет:")
+        if not new_name in row2:
+            QMessageBox.about(self, "!", "Либо данный предмет не существует, либо на него не назначен учитель")
+        else:
+            new_aud, ok_pressed = QInputDialog.getText(self, "!", "Введите аудиторию:")
+            self.cursor.execute(
+                f'UPDATE firs_week SET room = \'{new_aud}\', subject = \'{new_name}\' WHERE day = \'{row[0]}\' AND time = \'{row[1]}\'')
             self.conn.commit()
-        except:
-            QMessageBox.about(self, "Error", "Проверьте не меняли ли вы время или день/, или же вы ввели предмет, которого нет в списке")
-        self._update_shedule()
+            self._update_shedule()
 
 
     def _change_day_from_teacher(self, rowNum, day):
+        r = list()
         row = list()
+        row2 = list()
+        row3 = list()
         for i in range(self.teacher_table.columnCount()):
             try:
-                row.append(self.teacher_table.item(rowNum, i).text())
+                r.append(self.teacher_table.item(rowNum, i).text())
             except:
-                row.append(None)
-        try:
-            self.cursor.execute(f'UPDATE teacher SET name = \'{row[1]}\', subject = \'{row[2]}\' WHERE id = \'{row[0]}\'')
-            self.conn.commit()
-        except:
-            QMessageBox.about(self, "Error", "Проверьте не изменили ли вы id ,и есть ли ваш предмет в списке")
-        self._update_shedule2()
-
-    def _change_day_from_subject(self, rowNum, day):
-        row = list()
-        for i in range(self.subject_table.columnCount()):
+                r.append(None)
+        for i in range(30):
             try:
-                row.append(self.subject_table.item(rowNum, i).text())
+                row3.append(self.subject_table.item(i, 1).text())
+                print(row3)
+            except:
+                row3.append(None)
+        for i in range(30):
+            try:
+                row2.append(self.week_table.item(i, 2).text())
+                print(row2)
+            except:
+                row2.append(None)
+        for i in range(40):
+            try:
+                row.append(self.teacher_table.item(i, 2).text())
                 print(row)
             except:
                 row.append(None)
-        try:
-            self.cursor.execute(f'UPDATE subject SET name = \'{row[1]}\' WHERE id = {row[0]};')
+        print(r[2],row2)
+        if r[2] in row2:
+            new_name, ok_pressed = QInputDialog.getText(self, "!", "Данный предмет изменить нельзя\nвы можете изменить лишь имя учителя:")
+            self.cursor.execute(
+                f'UPDATE teacher SET name = \'{new_name}\' WHERE id = \'{r[0]}\'')
             self.conn.commit()
-            print(1)
-        except:
-            QMessageBox.about(self, "Error", "Либо предмет с таким именем уже существует, либо этот предмет нельзя изменить т.к. другие таблицы опираются на него")
-        self._update_shedule3()
+            self._update_shedule2()
+        else:
+            new_name, ok_pressed = QInputDialog.getText(self, "!", "Введите новое имя учителя:")
+            new_subject, ok_pressed = QInputDialog.getText(self, "!", "Введите предмет этого учителя:")
+            while True:
+                if not new_subject in row3:
+                    new_subject, ok_pressed = QInputDialog.getText(self, "!",
+                                                                "Данного предмета нет в списке\nпопробуйте еще раз:")
+                elif new_subject in row:
+                    if new_subject == r[2]:
+                        self.cursor.execute(
+                            f'UPDATE teacher SET name = \'{new_name}\', subject = \'{new_subject}\' WHERE id = \'{r[0]}\'')
+                        self.conn.commit()
+                        self._update_shedule2()
+                        break
+                    else:
+                        new_subject, ok_pressed = QInputDialog.getText(self, "!",
+                                                                    "Данный предмет уже занят другим учителем\nпопробуйте еще раз:")
+                else:
+                    self.cursor.execute(
+                        f'UPDATE teacher SET name = \'{new_name}\', subject = \'{new_subject}\' WHERE id = \'{r[0]}\'')
+                    self.conn.commit()
+                    self._update_shedule2()
+                    break
+
+    def _change_day_from_subject(self, rowNum, day):
+        row = list()
+        row2 = list()
+        row3 = list()
+        for i in range(self.teacher_table.columnCount()):
+            try:
+                row3.append(self.teacher_table.item(i, 2).text())
+            except:
+                row3.append(None)
+        for i in range(self.subject_table.columnCount()):
+            try:
+                row2.append(self.subject_table.item(rowNum, i).text())
+            except:
+                row2.append(None)
+        for i in range(40):
+            try:
+                row.append(self.subject_table.item(i, 1).text())
+            except:
+                row.append(None)
+        if row2[1] in row3:
+            QMessageBox.about(self, "!", "Данный предмет нельзя изменить")
+            self._update_shedule3()
+        else:
+            new_subject, ok_pressed = QInputDialog.getText(self, "!", "Измените данный предмет:")
+            while True:
+                if new_subject in row:
+                    new_subject, ok_pressed = QInputDialog.getText(self, "!",
+                                                            "Такой предмет уже существует\nпопробуйте еще раз")
+                else:
+                    self.cursor.execute(f'UPDATE subject SET name = \'{new_subject}\' WHERE id = {row2[0]};')
+                    self.conn.commit()
+                    self._update_shedule3()
+                    break
 
     def _update_shedule(self):
         self._update_week_table()
         self._update_schedule_table()
+        self._update_schedule_table2()
+        self._update_schedule_table3()
+        self._update_schedule_table4()
+        self._update_schedule_table5()
+        self._update_schedule_table6()
 
     def _update_shedule2(self):
         self._update_teacher_table()
         self._update_schedule_table()
+        self._update_schedule_table2()
+        self._update_schedule_table3()
+        self._update_schedule_table4()
+        self._update_schedule_table5()
+        self._update_schedule_table6()
 
     def _update_shedule3(self):
         self._update_subject_table()
         self._update_schedule_table()
+        self._update_schedule_table2()
+        self._update_schedule_table3()
+        self._update_schedule_table4()
+        self._update_schedule_table5()
+        self._update_schedule_table6()
+
 
     def _add_shedule(self):
-        self.cursor.execute('INSERT INTO teacher (name, subject) VALUES (\'\', \'\');')
-        self.conn.commit()
-        self._update_shedule2()
+        row = list()
+        row2 = list()
+        for i in range(40):
+            try:
+                row2.append(self.subject_table.item(i, 1).text())
+            except:
+                row2.append(None)
+                break
+        for i in range(40):
+            try:
+                row.append(self.teacher_table.item(i, 2).text())
+            except:
+                row.append(None)
+                break
+        if len(row2) == len(row):
+            QMessageBox.about(self, "!", "Нет доступных предметов")
+        else:
+            new_name, ok_pressed = QInputDialog.getText(self, "!", "Введите новое имя учителя:")
+            new_subject, ok_pressed = QInputDialog.getText(self, "!", "Введите предмет этого учителя:")
+            while True:
+                if not new_subject in row2:
+                    new_subject, ok_pressed = QInputDialog.getText(self, "!",
+                                                                    "Данного предмета нет в списке\nпопробуйте еще раз:")
+                elif new_subject in row:
+                    new_subject, ok_pressed = QInputDialog.getText(self, "!", "Данный предмет уже занят другим учителем\nпопробуйте еще раз:")
+                else:
+                    self.cursor.execute(f'INSERT INTO teacher (name, subject) VALUES (\'{new_name}\', \'{new_subject}\');')
+                    self.conn.commit()
+                    self._update_shedule2()
+                    break
+
 
     def _add_shedule2(self):
-        try:
-            self.cursor.execute('INSERT INTO subject (name) VALUES (\'New subject\');')
-            self.conn.commit()
-        except:
-            QMessageBox.about(self, "Error", "Сначала измените новый предмет")
-        self._update_shedule3()
+        row = list()
+        for i in range(40):
+            try:
+                row.append(self.subject_table.item(i, 1).text())
+            except:
+                row.append(None)
+        new_name, ok_pressed = QInputDialog.getText(self, "Привет", "Введите новое имя предмета:")
+        while True:
+            if new_name in row:
+                new_name, ok_pressed = QInputDialog.getText(self, "!", "Данный предмет уже существутет\nпопробуйте еще раз")
+            else:
+                self.cursor.execute(f'INSERT INTO subject (name) VALUES (\'{new_name}\');')
+                self.conn.commit()
+                self._update_shedule3()
+                break
+
 
 app = QApplication(sys.argv)
 win = MainWindow()
